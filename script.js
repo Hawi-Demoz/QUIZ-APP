@@ -1,24 +1,37 @@
-// script.js
-const questions = [
-  {
-    question: "What is the capital of France?",
-    answers: ["Berlin", "Madrid", "Paris", "London"],
-    correct: "Paris"
-  },
-  {
-    question: "Which language runs in a web browser?",
-    answers: ["Java", "C", "Python", "JavaScript"],
-    correct: "JavaScript"
-  }
-];
-
 const questionEl = document.getElementById("question");
 const answerButtons = document.querySelectorAll(".answer");
 const nextBtn = document.getElementById("next-btn");
 
+let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
 
+// Step 1: Fetch from Open Trivia DB
+fetch("https://opentdb.com/api.php?amount=5&type=multiple")
+  .then(res => res.json())
+  .then(data => {
+    questions = data.results.map(q => {
+      const answers = [...q.incorrect_answers];
+      const randomIndex = Math.floor(Math.random() * 4);
+      answers.splice(randomIndex, 0, q.correct_answer); // Insert correct answer randomly
+      return {
+        question: decodeHTML(q.question),
+        answers: answers.map(a => decodeHTML(a)),
+        correct: decodeHTML(q.correct_answer)
+      };
+    });
+
+    showQuestion();
+  });
+
+// Step 2: Decode HTML special characters (like &quot;)
+function decodeHTML(str) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = str;
+  return txt.value;
+}
+
+// Step 3: Show current question
 function showQuestion() {
   resetState();
   const current = questions[currentQuestionIndex];
@@ -29,6 +42,7 @@ function showQuestion() {
   });
 }
 
+// Step 4: Handle answer selection
 function selectAnswer(selectedBtn, correctAnswer) {
   const isCorrect = selectedBtn.textContent === correctAnswer;
   if (isCorrect) {
@@ -38,12 +52,11 @@ function selectAnswer(selectedBtn, correctAnswer) {
     selectedBtn.style.backgroundColor = "lightcoral";
   }
 
-  // Disable all buttons
   answerButtons.forEach(btn => btn.disabled = true);
-
   nextBtn.style.display = "block";
 }
 
+// Step 5: Reset buttons and hide "Next"
 function resetState() {
   nextBtn.style.display = "none";
   answerButtons.forEach(btn => {
@@ -52,6 +65,7 @@ function resetState() {
   });
 }
 
+// Step 6: Handle next question or show score
 nextBtn.addEventListener("click", () => {
   currentQuestionIndex++;
   if (currentQuestionIndex < questions.length) {
@@ -61,6 +75,7 @@ nextBtn.addEventListener("click", () => {
   }
 });
 
+// Step 7: Show final score and restart option
 function showScore() {
   questionEl.textContent = `You scored ${score} out of ${questions.length}!`;
   document.querySelector(".answers").style.display = "none";
@@ -68,6 +83,3 @@ function showScore() {
   nextBtn.style.display = "block";
   nextBtn.onclick = () => location.reload();
 }
-
-// Start the quiz
-showQuestion();
