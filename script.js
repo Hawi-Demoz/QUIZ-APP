@@ -1,28 +1,38 @@
-const questionEl = document.getElementById("question");
-const answerButtons = document.querySelectorAll(".answer");
-const nextBtn = document.getElementById("next-btn");
-
 let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
+let timer;
+let timeLeft = 15; // seconds per question
 
-// Step 1: Fetch from Open Trivia DB
-fetch("https://opentdb.com/api.php?amount=5&type=multiple")
-  .then(res => res.json())
-  .then(data => {
-    questions = data.results.map(q => {
-      const answers = [...q.incorrect_answers];
-      const randomIndex = Math.floor(Math.random() * 4);
-      answers.splice(randomIndex, 0, q.correct_answer); // Insert correct answer randomly
-      return {
-        question: decodeHTML(q.question),
-        answers: answers.map(a => decodeHTML(a)),
-        correct: decodeHTML(q.correct_answer)
-      };
+const questionEl = document.getElementById("question");
+const answerButtons = document.querySelectorAll(".answer");
+const nextBtn = document.getElementById("next-btn");
+const quizContainer = document.getElementById("quiz");
+const startBtn = document.getElementById("start-btn");
+const categorySelect = document.getElementById("category");
+
+startBtn.addEventListener("click", () => {
+  const category = categorySelect.value;
+  startBtn.style.display = "none";
+  categorySelect.disabled = true;
+  fetch(`https://opentdb.com/api.php?amount=10&category=${category}&type=multiple`)
+    .then(res => res.json())
+    .then(data => {
+      questions = data.results.map(q => {
+        const answers = [...q.incorrect_answers];
+        const randomIndex = Math.floor(Math.random() * 4);
+        answers.splice(randomIndex, 0, q.correct_answer);
+        return {
+          question: decodeHTML(q.question),
+          answers: answers.map(a => decodeHTML(a)),
+          correct: decodeHTML(q.correct_answer)
+        };
+      });
+      quizContainer.style.display = "block";
+      showQuestion();
     });
+});
 
-    showQuestion();
-  });
 
 // Step 2: Decode HTML special characters (like &quot;)
 function decodeHTML(str) {

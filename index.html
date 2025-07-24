@@ -1,23 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz App</title>
-    <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz App</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="quiz-container" id="quiz">
-        <h2 id="question">Question Text</h2>
-        <div class="answers">
-            <button class="answer">Answer 1</button>
-            <button class="answer">Answer 2</button>
-            <button class="answer">Answer 3</button>
-            <button class="answer">Answer 4</button>
-        </div>
-        <button id="next-btn">Next</button>
 
+  <!-- Setup Section: Category Picker + Start Button -->
+  <div class="setup">
+    <label for="category">Choose a category:</label>
+    <select id="category">
+      <option value="9">General Knowledge</option>
+      <option value="18">Science: Computers</option>
+      <option value="23">History</option>
+      <option value="21">Sports</option>
+      <option value="22">Geography</option>
+      <option value="27">Animals</option>
+    </select>
+    <button id="start-btn">Start Quiz</button>
+  </div>
+
+  <!-- Quiz Container (initially hidden) -->
+  <div class="quiz-container" id="quiz" style="display: none;">
+    <div class="top-bar">
+      <div id="timer">⏳ Time: 15s</div>
+      <div id="score-display"></div>
     </div>
-    <script src="script.js"></script>
+    <h2 id="question">Loading question...</h2>
+    <div class="answers">
+      <button class="answer">Answer 1</button>
+      <button class="answer">Answer 2</button>
+      <button class="answer">Answer 3</button>
+      <button class="answer">Answer 4</button>
+    </div>
+    <button id="next-btn">Next</button>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
